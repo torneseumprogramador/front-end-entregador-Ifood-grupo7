@@ -11,7 +11,7 @@ function RoutesConfig() {
       <Route element={<PrivateRoute />}>
         <Route path="/" element={<Orders />} />
 
-        <Route path="/:pedidoid" element={<OrderTraking />} />
+        <Route path="/:orderid" element={<OrderTraking />} />
       </Route>
 
       <Route path="/login" element={<Login />} />

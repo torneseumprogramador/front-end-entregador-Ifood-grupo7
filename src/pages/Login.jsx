@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useToast } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
-import illustrationLogin from "../assets/illustration-login.svg";
+import illustrationLogin from "../assets/illustration-login.png";
 
 import fakeDriver from "../utils/fakeDriver";
 
@@ -58,11 +58,11 @@ export default function Login() {
       justifyContent="center"
       maxWidth="500px"
       marginX="auto"
-      paddingTop={10}
+      paddingTop={6}
     >
       {showIllustration && (
-        <Box marginBottom={16} px={10}>
-          <Image src={illustrationLogin} />
+        <Box marginBottom={10} px={10}>
+          <Image src={illustrationLogin} maxW="250px" mx="auto" />
         </Box>
       )}
 

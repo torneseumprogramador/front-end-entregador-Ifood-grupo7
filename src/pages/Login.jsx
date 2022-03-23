@@ -17,7 +17,7 @@ import illustrationLogin from "../assets/illustration-login.svg";
 import fakeDriver from "../utils/fakeDriver";
 
 export default function Login() {
-  const [showIllustration] = useMediaQuery("(min-height: 600px)");
+  const [showIllustration] = useMediaQuery("(min-height: 560px)");
   const [isLoading, setIsLoading] = React.useState(false);
 
   const navigate = useNavigate();
@@ -46,21 +46,22 @@ export default function Login() {
         status: "error",
         duration: 5000,
         isClosable: true,
+        position: "top",
       });
     }, 2000);
   }
 
   return (
     <Box
-      minHeight="100vh"
       display="flex"
       flexDirection="column"
       justifyContent="center"
       maxWidth="500px"
       marginX="auto"
+      paddingTop={10}
     >
       {showIllustration && (
-        <Box marginBottom={28} px={10}>
+        <Box marginBottom={16} px={10}>
           <Image src={illustrationLogin} />
         </Box>
       )}
@@ -89,6 +90,7 @@ export default function Login() {
                 autoComplete="off"
                 onFocus={() => {
                   toast.closeAll();
+                  window.scrollTo(0, document.body.scrollHeight);
                 }}
               />
             </FormControl>
@@ -104,6 +106,7 @@ export default function Login() {
                 autoComplete="off"
                 onFocus={() => {
                   toast.closeAll();
+                  window.scrollTo(0, document.body.scrollHeight);
                 }}
               />
             </FormControl>

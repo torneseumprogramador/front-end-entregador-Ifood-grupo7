@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormErrorMessage,
   Input,
   VStack,
   Text,
@@ -48,7 +47,7 @@ export default function Login() {
         isClosable: true,
         position: "top",
       });
-    }, 2000);
+    }, 1000);
   }
 
   return (

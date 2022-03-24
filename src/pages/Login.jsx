@@ -12,42 +12,51 @@ import React from "react";
 import { useToast } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
 import illustrationLogin from "../assets/illustration-login.png";
-
-import fakeDriver from "../utils/fakeDriver";
+import axios from "../utils/axiosConfig";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const token = window.localStorage.getItem("ksToken");
+
+  if (token) {
+    navigate("/");
+  }
+
   const [showIllustration] = useMediaQuery("(min-height: 560px)");
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const navigate = useNavigate();
   const toast = useToast();
-
   const inputEmail = React.useRef();
   const inputPassword = React.useRef();
+  const toastRef = React.useRef();
+
+  function showToastError(msg) {
+    toastRef.current = toast({
+      title: msg,
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+      position: "top",
+    });
+  }
 
   async function login(e) {
     e.preventDefault();
-
     const email = inputEmail.current.value;
     const password = inputPassword.current.value;
-
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (email === fakeDriver.email && password === fakeDriver.password) {
-        return navigate("/");
-      }
-
+    try {
+      const response = await axios.post("/login", { email, password });
+      window.localStorage.setItem("ksToken", response.data.token);
+      navigate("/");
+    } catch (error) {
       setIsLoading(false);
-
-      toast({
-        title: "Email ou senha inválida",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-    }, 1000);
+      if (toastRef.current) {
+        toast.close(toastRef.current);
+      }
+      showToastError(error.response.data.message);
+    }
   }
 
   return (

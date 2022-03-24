@@ -18,9 +18,11 @@ export default function Login() {
   const navigate = useNavigate();
   const token = window.localStorage.getItem("ksToken");
 
-  if (token) {
-    navigate("/");
-  }
+  React.useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, []);
 
   const [showIllustration] = useMediaQuery("(min-height: 560px)");
   const [isLoading, setIsLoading] = React.useState(false);

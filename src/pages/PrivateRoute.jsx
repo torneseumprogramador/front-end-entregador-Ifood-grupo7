@@ -1,8 +1,8 @@
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import getToken from "../utils/getToken";
 export default function PrivateRoute() {
-  const token = window.localStorage.getItem("ksToken");
+  const token = getToken();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 

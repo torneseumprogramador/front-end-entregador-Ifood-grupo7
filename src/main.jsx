@@ -5,13 +5,18 @@ import RoutesConfig from "./RoutesConfig";
 import { ChakraProvider } from "@chakra-ui/react";
 import customTheme from "./customTheme";
 
+import { QueryClient, QueryClientProvider } from "react-query";
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <React.StrictMode>
-    <ChakraProvider theme={customTheme}>
-      <BrowserRouter>
-        <RoutesConfig />
-      </BrowserRouter>
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={customTheme}>
+        <BrowserRouter>
+          <RoutesConfig />
+        </BrowserRouter>
+      </ChakraProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

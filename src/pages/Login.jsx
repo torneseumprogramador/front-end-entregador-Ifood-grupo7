@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useToast } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
-import illustrationLogin from "../assets/illustration-login.png";
+import illustrationLogin from "../assets/illustration-login-small.png";
 import axios from "../utils/axiosConfig";
 
 export default function Login() {

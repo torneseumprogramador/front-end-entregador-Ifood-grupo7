@@ -2,11 +2,18 @@ import { Box, Button, Link, Text } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import React from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import axios from "../utils/axiosConfig";
 
 export default function OrderTraking() {
+  const params = useParams();
+  const { data, isLoading, isError } = useQuery("order", async () => {
+    const response = await axios.get(`orders/${params.orderid}`);
+    console.log(response.data);
+    return response.data;
+  });
   const [loading, setLoading] = React.useState();
   const [trakingHistory, setTrakingHistory] = React.useState([]);
-  const params = useParams();
 
   React.useEffect(async () => {
     if (trakingHistory.length > 0) {
@@ -80,7 +87,7 @@ export default function OrderTraking() {
         {trakingHistory.length > 0 && (
           <>
             <Box></Box>
-            <Box px={4} minHeight="100vh">
+            <Box px={4}>
               {trakingHistory.map((track, index) => {
                 return (
                   <Box
@@ -142,27 +149,35 @@ export default function OrderTraking() {
                 );
               })}
             </Box>
-
-            <Box
-              position="sticky"
-              bottom="0"
-              px={4}
-              py={3}
-              bg="white"
-              borderTop="1px"
-              borderColor="blackAlpha.200"
-              display="flex"
-              gap={4}
-            >
-              <Button flexGrow={1}>Concluir</Button>
-              <Button flexGrow={1} bg="gray.500">
-                Cancelar
-              </Button>
-            </Box>
           </>
         )}
 
-        {trakingHistory.length === 0 && (
+        {data?.status === "EM_TRANSITO" && (
+          <Box
+            position="sticky"
+            bottom="0"
+            px={4}
+            py={3}
+            bg="white"
+            borderTop="1px"
+            borderColor="blackAlpha.200"
+            display="flex"
+            gap={4}
+          >
+            <Button flexGrow={1}>Concluir</Button>
+            <Button
+              flexGrow={1}
+              bg="gray.500"
+              _hover={{ bg: "gray.600" }}
+              _focus={{ bg: "gray.600" }}
+              _active={{ bg: "gray.600" }}
+            >
+              Cancelar
+            </Button>
+          </Box>
+        )}
+
+        {trakingHistory.length === 0 && data?.status === "EM_ESPERA" && (
           <Box px={4}>
             <Button w="full" onClick={addTrack} isLoading={loading}>
               Iniciar Tracking

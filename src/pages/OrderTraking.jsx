@@ -1,8 +1,7 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { Box, Text, Link, Button, position } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { Box, Button, Link, Text } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
+import React from "react";
+import { Link as RouterLink, useParams } from "react-router-dom";
 
 export default function OrderTraking() {
   const [loading, setLoading] = React.useState();

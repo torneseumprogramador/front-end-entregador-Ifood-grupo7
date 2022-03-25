@@ -2,15 +2,15 @@ import {
   Box,
   Button,
   FormControl,
-  Input,
-  VStack,
-  Text,
   Image,
+  Input,
+  Text,
+  useMediaQuery,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import React from "react";
-import { useToast } from "@chakra-ui/react";
-import { useMediaQuery } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import illustrationLogin from "../assets/illustration-login-small.png";
 import axios from "../utils/axiosConfig";
 

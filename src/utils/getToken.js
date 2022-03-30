@@ -1,3 +1,3 @@
 export default () => {
-  return window.localStorage.getItem("ksToken");
+  return window.localStorage.getItem("ksToken") || null;
 };

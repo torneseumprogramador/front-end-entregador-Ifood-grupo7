@@ -2,7 +2,7 @@ import axios from "axios";
 import getToken from "./getToken";
 
 const axiosConfig = axios.create({
-  baseURL: "http://localhost:3001/",
+  baseURL: "http://localhost:8080/",
   headers: {
     Authorization: getToken(),
   },

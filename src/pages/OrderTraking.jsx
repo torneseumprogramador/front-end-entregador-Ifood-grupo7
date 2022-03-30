@@ -1,56 +1,76 @@
 import { Box, Button, Link, Text } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import React from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import cancelOrder from "../utils/api/cancelOrder";
+import completeOrder from "../utils/api/completeOrder";
+import startOrderTracking from "../utils/api/startOrderTracking.js";
 import axios from "../utils/axiosConfig";
+import { TrackingPulse } from "../utils/contexts/TrackingPulse";
 
 export default function OrderTraking() {
+  const {
+    pulseTracking,
+    startPulseTracking,
+    stopPulseTracking,
+    setPulseTrackingOrderId,
+  } = React.useContext(TrackingPulse);
+  const [loadingButtons, setLoadingButtons] = React.useState(false);
   const params = useParams();
-  const { data, isLoading, isError } = useQuery("order", async () => {
-    const response = await axios.get(`orders/${params.orderid}`);
-    console.log(response.data);
-    return response.data;
-  });
-  const [loading, setLoading] = React.useState();
-  const [trakingHistory, setTrakingHistory] = React.useState([]);
+  const { data, isLoading, isError } = useQuery(
+    "order",
+    async () => {
+      const response = await axios.get(`orders/${params.orderid}`);
+      response.data.trackingList.sort((a, b) => {
+        if (Number(a.timestamp) < Number(b.timestamp)) {
+          return 1;
+        }
+        if (Number(a.timestamp) > Number(b.timestamp)) {
+          return -1;
+        }
+        return 0;
+      });
+      if (response.data.status === 2 && pulseTracking === false) {
+        setPulseTrackingOrderId(response.data.orderId);
+        startPulseTracking(true);
+      }
+      return response.data;
+    },
+    { cacheTime: 0 }
+  );
 
-  React.useEffect(async () => {
-    if (trakingHistory.length > 0) {
-      setTimeout(() => {
-        addTrack();
-      }, 10000);
-    }
-  }, [trakingHistory]);
+  const queryClient = useQueryClient();
+  // inicia o tracking
+  async function start() {
+    setLoadingButtons(true);
+    setPulseTrackingOrderId(data.orderId);
 
-  async function getGeoLocation() {
-    const coordinates = await getCoordinates();
+    const response = await startOrderTracking(data.orderId);
 
-    return {
-      latitude: coordinates.coords.latitude,
-      longitude: coordinates.coords.longitude,
-      timestamp: coordinates.timestamp,
-    };
+    queryClient.invalidateQueries(["order"]);
+    startPulseTracking();
+    setLoadingButtons(false);
   }
 
-  function getCoordinates() {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
+  // conclui
+  async function complete() {
+    setLoadingButtons(true);
+    stopPulseTracking();
+    const response = await completeOrder(data.orderId);
+    queryClient.invalidateQueries(["order"]);
+    setPulseTrackingOrderId(null);
+    setLoadingButtons(false);
   }
 
-  async function addTrack() {
-    setLoading(true);
-    const geolocation = await getGeoLocation();
-
-    setTrakingHistory([
-      {
-        timestamp: geolocation.timestamp,
-        latitude: geolocation.latitude,
-        longitude: geolocation.longitude,
-      },
-      ...trakingHistory,
-    ]);
+  // cancela
+  async function cancel() {
+    setLoadingButtons(true);
+    stopPulseTracking();
+    const response = await cancelOrder(data.orderId);
+    queryClient.invalidateQueries(["order"]);
+    setPulseTrackingOrderId(null);
+    setLoadingButtons(false);
   }
 
   return (
@@ -83,15 +103,32 @@ export default function OrderTraking() {
         <span></span>
       </Box>
 
+      {isLoading && <Text textAlign="center">Carregando...</Text>}
+
+      {/* caso status concluido */}
+      {data?.status === 3 && (
+        <Text textAlign="center" mb={4} fontSize="1.2rem" fontWeight="bold">
+          Pedido concluido
+        </Text>
+      )}
+
+      {/* caso status cancelado */}
+      {data?.status === 4 && (
+        <Text textAlign="center" mb={4} fontSize="1.2rem" fontWeight="bold">
+          Pedido cancelado
+        </Text>
+      )}
+
       <Box>
-        {trakingHistory.length > 0 && (
+        {/* caso possua um histórico de tracking */}
+        {data?.trackingList.length > 0 && (
           <>
             <Box></Box>
             <Box px={4}>
-              {trakingHistory.map((track, index) => {
+              {data.trackingList.map((track, index) => {
                 return (
                   <Box
-                    key={track.timestamp}
+                    key={track.id}
                     display="flex"
                     alignItems="center"
                     gap={4}
@@ -143,7 +180,7 @@ export default function OrderTraking() {
                       fontWeight="medium"
                       color="gray.600"
                     >
-                      {new Date(track.timestamp).toLocaleTimeString()}
+                      {new Date(Number(track.timestamp)).toLocaleTimeString()}
                     </Text>
                   </Box>
                 );
@@ -152,7 +189,17 @@ export default function OrderTraking() {
           </>
         )}
 
-        {data?.status === "EM_TRANSITO" && (
+        {/* caso status em espera */}
+        {data?.status === 1 && (
+          <Box px={4}>
+            <Button w="full" onClick={start} isLoading={loadingButtons}>
+              Iniciar Tracking
+            </Button>
+          </Box>
+        )}
+
+        {/* caso status em transito */}
+        {data?.status === 2 && (
           <Box
             position="sticky"
             bottom="0"
@@ -164,23 +211,19 @@ export default function OrderTraking() {
             display="flex"
             gap={4}
           >
-            <Button flexGrow={1}>Concluir</Button>
+            <Button flexGrow={1} onClick={complete} isLoading={loadingButtons}>
+              Concluir
+            </Button>
             <Button
               flexGrow={1}
               bg="gray.500"
               _hover={{ bg: "gray.600" }}
               _focus={{ bg: "gray.600" }}
               _active={{ bg: "gray.600" }}
+              isLoading={loadingButtons}
+              onClick={cancel}
             >
               Cancelar
-            </Button>
-          </Box>
-        )}
-
-        {trakingHistory.length === 0 && data?.status === "EM_ESPERA" && (
-          <Box px={4}>
-            <Button w="full" onClick={addTrack} isLoading={loading}>
-              Iniciar Tracking
             </Button>
           </Box>
         )}

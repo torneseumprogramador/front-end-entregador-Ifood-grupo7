@@ -119,6 +119,12 @@ export default function OrderTraking() {
         </Text>
       )}
 
+      {isError && (
+        <Text textAlign="center" mb={4} fontSize="1.2rem" fontWeight="bold">
+          Pedido não encontrado
+        </Text>
+      )}
+
       <Box>
         {/* caso possua um histórico de tracking */}
         {data?.trackingList.length > 0 && (

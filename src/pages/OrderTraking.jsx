@@ -105,6 +105,16 @@ export default function OrderTraking() {
 
       {isLoading && <Text textAlign="center">Carregando...</Text>}
 
+      {data?.status === 2 && (
+        <Box display="flex" justifyContent="center">
+          <div className="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </Box>
+      )}
+
       {/* caso status concluido */}
       {data?.status === 3 && (
         <Text textAlign="center" mb={4} fontSize="1.2rem" fontWeight="bold">

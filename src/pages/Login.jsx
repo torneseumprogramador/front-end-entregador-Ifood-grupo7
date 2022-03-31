@@ -59,7 +59,7 @@ export default function Login() {
 
       const data = await res.json();
       window.localStorage.setItem("ksToken", data.token);
-      navigate("/");
+      document.location.reload(true);
     } catch (error) {
       setIsLoading(false);
       if (toastRef.current) {

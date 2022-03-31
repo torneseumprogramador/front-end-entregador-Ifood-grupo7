@@ -3,7 +3,7 @@ import getDriverByToken from "../getDriverByToken";
 
 export default async () => {
   const driverLogged = getDriverByToken();
-  const response = await axios.get(`orders?driver_id=${driverLogged.id}`);
+  const response = await axios.get(`orders?driver_id=${driverLogged.sub}`);
   const existsInTransit = response.data.find((order) => order.status === 2);
 
   if (existsInTransit) {

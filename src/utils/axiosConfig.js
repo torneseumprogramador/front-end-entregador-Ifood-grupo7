@@ -2,7 +2,7 @@ import axios from "axios";
 import getToken from "./getToken";
 
 const axiosConfig = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: "https://drivers-tracking.herokuapp.com/",
   headers: {
     Authorization: getToken(),
   },

@@ -6,7 +6,7 @@ export default () => {
     return null;
   }
 
-  const token = getToken().replace("Bearer ", "");
+  const token = getToken().replace("BEARER ", "");
   const driverLogged = jtwDecoder(token);
 
   return driverLogged;

@@ -49,15 +49,24 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("/login", { email, password });
-      window.localStorage.setItem("ksToken", response.data.token);
+      const res = await fetch("https://drivers-tracking.herokuapp.com/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      window.localStorage.setItem("ksToken", data.token);
       navigate("/");
     } catch (error) {
       setIsLoading(false);
       if (toastRef.current) {
         toast.close(toastRef.current);
       }
-      showToastError(error.response.data.message);
+
+      showToastError("Opss! algo deu errado");
     }
   }
 

@@ -14,6 +14,8 @@
 <p>Este projeto teve por objetivo manter todo o histórico de telemetria de um entregador para um determinado pedido</p>
  
 Para ver a aplicação funcionando, clique aqui: [Kintsugi](https://kintsugi-develop.vercel.app/)</br>
+Para acessar o repositório do backend, clique aqui: [Back End](https://github.com/Kintsugi-ifood/apientregador)</br>
+Para acessar o repositório do frontend, clique aqui: [Front End](https://github.com/Kintsugi-ifood/front-end-entregador)</br>
  
 ### Desenvolvedores
 - [Carolina Marques](https://github.com/caru-marques)
